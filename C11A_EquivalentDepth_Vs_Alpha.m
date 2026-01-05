@@ -1,0 +1,88 @@
+% Clear variables and close figures
+clearvars; close all; clc;
+
+% Constants
+H = 50;
+zeta = 0.0;
+Vzero = 100; % m/s
+Vzero_complex = Vzero * sqrt(1 + (2 * 1i * zeta));
+
+% Parameters
+alpha = -10:1e-5:1;        % keep your full sweep; we’ll zoom xlim to [0,1]
+lambdaH_vec = [3, 5, 10, 15];
+
+% Precompute terms that do not depend on lambda_H
+A      = 1 ./ (1 - alpha);
+ratio  = 1 - alpha;
+fhomo  = (Vzero_complex .* A) ./ (4 * H);
+
+
+%% Figure 1: z_eq/H vs alpha (2x2 subplots for different lambda_H)
+figure(1); clf;
+for k = 1:numel(lambdaH_vec)
+     lambda_H = lambdaH_vec(k);     % dimensionless: lambda_H = H * lambda
+     lambda   = lambda_H / H;       % <-- corrected per-subplot lambda
+
+     fsin   = (H .* sqrt((exp(-2 * H * lambda) .* ...
+        (4 .* exp(H * lambda) .* alpha .* (pi^4 + 6 * H^2 * pi^2 * lambda^2 + 8 * H^4 * lambda^4) ...
+        - alpha.^2 .* (pi^4 + 9 * H^2 * pi^2 * lambda^2 + 8 * H^4 * lambda^4) ...
+        + exp(2 * H * lambda) .* (8 * H^5 * lambda^5 + pi^4 .* ((-4 + alpha) .* alpha + 2 * H * lambda) ...
+        + H^2 * pi^2 * lambda^2 .* ((-16 + alpha) .* alpha + 10 * H * lambda)))) ./ ...
+        (H^3 * lambda .* (pi^4 + 5 * H^2 * pi^2 * lambda^2 + 4 * H^4 * lambda^4)))) ./ sqrt(2);
+
+    den_common = fhomo - (fsin .* fhomo);
+
+
+    % High-frequency branch
+    zeq_H_high = log(alpha + ((lambda_H .* alpha) ./ (-lambda_H - log(-1 + alpha) + log(-exp(lambda_H) + alpha)))) ./ lambda_H;
+
+    % Low-frequency branch (handle zero/near-zero denominators)
+    den = den_common;
+    near_zero = abs(den) < eps;         % logical mask
+    zeq_H_low = zeros(size(alpha));
+    zeq_H_low(~near_zero) = log((fhomo(~near_zero) .* alpha(~near_zero)) ./ den(~near_zero)) ./ lambda_H;
+    zeq_H_low(near_zero) = -1e6;        % large negative instead of -inf
+
+    % Replace NaNs with large negative for visualization
+    zeq_H_high(isnan(zeq_H_high)) = -1e6;
+
+    % Plot
+    subplot(2,2,k); hold on; box on;
+    plot(alpha, real(zeq_H_high), 'k-',  'DisplayName','High Frequency');
+    plot(alpha, real(zeq_H_low),  'k--', 'DisplayName','Low Frequency');
+    xlabel('\alpha'); ylabel('z_{eq}/H');
+    title(sprintf('\\lambdaH = %g', lambda_H));
+    xlim([-1 1]); ylim([0 1]);
+    legend('show','Location','southwest');
+end
+
+
+%% Figure 2: z_eq/H vs V0/V_\infty (Stiffness ratio used in Rovithis & Mylonakis 2022) with the same 4 subplots
+% figure(2); clf;
+% for k = 1:numel(lambdaH_vec)
+%     lambda_H = lambdaH_vec(k);
+% 
+%     % High-frequency branch
+%     zeq_H_high = log(alpha + ((lambda_H .* alpha) ./ (-lambda_H - log(-1 + alpha) + log(-exp(lambda_H) + alpha)))) ./ lambda_H;
+% 
+%     % Low-frequency branch
+%     den = den_common;
+%     near_zero = abs(den) < eps;
+%     zeq_H_low = zeros(size(alpha));
+%     zeq_H_low(~near_zero) = log((fhomo(~near_zero) .* alpha(~near_zero)) ./ den(~near_zero)) ./ lambda_H;
+%     zeq_H_low(near_zero) = -1e6;
+% 
+%     % Replace NaNs
+%     zeq_H_high(isnan(zeq_H_high)) = -1e6;
+% 
+%     % Plot vs ratio = V0/Vinf
+%     subplot(2,2,k); hold on; box on;
+%     plot(ratio, real(zeq_H_high), 'k-',  'DisplayName','High Frequency');
+%     plot(ratio, real(zeq_H_low),  'k--', 'DisplayName','Low Frequency');
+%     yline(0.5, 'k:');
+%     xlabel('V_{0}/V_{\infty}'); ylabel('z_{eq}/H');
+%     title(sprintf('\\lambda_H = %g', lambda_H));
+%     xlim([0 10]); ylim([0 2]);
+%     legend('show','Location','southwest');
+% end
+
