@@ -11,7 +11,7 @@ The paper is in the final stages of editing and will soon be submitted for peer 
 
 If you use this code or the results derived from it in your work, please cite the paper as follows:
 
-Elbasheir, K., Parashakis, H., Rovithis, E., Kishida, T., Giaralis, A., & Mylonakis, G. (202X). Seismic Response of Soil Deposits with 1 Bounded Exponential Inhomogeneity. [Paper in peer review].
+Elbasheir, K., Parashakis, H., Rovithis, E., Kishida, T., Giaralis, A., & Mylonakis, G. (202X). Seismic Response of Soil Deposits with Bounded Exponential Inhomogeneity. [Paper in peer review].
 You can also link to the repository:
 https://github.com/khalid-elbasheir/Bounded_Vs_1DHR
 
