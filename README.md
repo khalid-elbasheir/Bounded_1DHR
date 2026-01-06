@@ -2,7 +2,7 @@
 
 This repository contains the MATLAB code used to generate the figures for the research paper titled:
 
-"Seismic Response of Soil Deposits with 1 Bounded Exponential Inhomogeneity"
+"Seismic Response of Soil Deposits with Bounded Exponential Inhomogeneity"
 K. Elbasheir, H. Parashakis, E. Rovithis, T. Kishida, A. Giaralis, G. Mylonakis
 
 The paper is in the final stages of editing and will soon be submitted for peer review. The code here is made available to support the research, and users are encouraged to explore and build upon it.
