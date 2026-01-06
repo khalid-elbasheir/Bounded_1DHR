@@ -7,7 +7,7 @@ K. Elbasheir, H. Parashakis, E. Rovithis, T. Kishida, A. Giaralis, G. Mylonakis
 
 The paper is in the final stages of editing and will soon be submitted for peer review. The code here is made available to support the research, and users are encouraged to explore and build upon it.
 
----Citation---
+## Citation
 
 If you use this code or the results derived from it in your work, please cite the paper as follows:
 
@@ -15,7 +15,7 @@ Elbasheir, K., Parashakis, H., Rovithis, E., Kishida, T., Giaralis, A., & Mylona
 You can also link to the repository:
 https://github.com/khalid-elbasheir/Bounded_Vs_1DHR
 
----License---
+## License
 
 This repository is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0).
 
