@@ -5,7 +5,7 @@ tic;
 
 % Fixed parameters
 H = 50;
-alpha = 0.9995;
+alpha = 1;
 
 % lambdaH values and corresponding psi sets (only use first freq psi(1)) 
 lambdaH_list = [5, 8, 10, 15];
@@ -17,7 +17,7 @@ psi_values_list = {
 };
 
 % Discretize depth
-z = 0:0.2:H;
+z = 1E-5:0.2:H;
 z_H = z / H;
 nZ = length(z);
 
@@ -50,31 +50,24 @@ for idx = 1:length(lambdaH_list)
     Z3 = -((1 - alpha) / alpha);
 
     
-    % For displacement, compute surface terms
+    % compute 
     F1SURF = hypergeom([a1, b1], c1, Z3);
     F1Base = hypergeom([a1,b1], c1, Z2);
 
-    F2SURF = hypergeom([a2,b2], c2, Z3);
-    F2Base = hypergeom([a2,b2], c2, Z2);
-
+   
     PH1surf = (-(lambdaH/H)) / (2 * alpha) * hypergeom([a3, b3], c3, Z3);
     PH1Base = ((-(lambdaH/H) * exp(lambdaH)) / (2 * alpha)) * hypergeom([a3,b3], c3, Z2);
 
-    PH2SURF = ((-(lambdaH/H)) / (2 * alpha)) * hypergeom([a4,b4], c4, Z3);
-    PH2Base = ((-(lambdaH/H) * exp(lambdaH)) / (2 * alpha)) * hypergeom([a4,b4], c4, Z2);
-
+    
     E_surf = (lambdaH/H) * S1 * (1 - alpha)^(-S2) * F1SURF + (1 - alpha)^(S1) * PH1surf;
     E_base = (lambdaH/H) * exp(lambdaH) * S1 * (exp(lambdaH) - alpha)^(-S2) * F1Base + (exp(lambdaH) - alpha)^(S1) * PH1Base;
 
-    M_surf = (lambdaH/H) * S2 * (1 - alpha)^(-S1) * F2SURF + (1 - alpha)^(S2) * PH2SURF;
-    M_base = (lambdaH/H) * exp(lambdaH) * S2 * (exp(lambdaH) - alpha)^(-S1) * F2Base + (exp(lambdaH) - alpha)^(S2) * PH2Base;
     
     CON1 = 1;
-    u0 = CON1 * ( E_surf - (  ((1 - alpha)^ sqrt(1 - 4*psi^2)) * (F1SURF/F2SURF) * M_surf   ) );
-    uH = CON1 * ( E_base - (  ((1 - alpha)^ sqrt(1 - 4*psi^2)) * (F1SURF/F2SURF) * M_base   ) );
+    u0 = CON1 * ( E_surf );
+    uH = CON1 * ( E_base );
 
-    Denom_strain = - CON1 * psi^(2) * (lambdaH/H)^(2) * exp(2*lambdaH) * ( (exp(lambdaH) - alpha)^(S1 - 2) * F1Base - ...
-        (exp(lambdaH) - alpha)^(S2-2) * (1 - alpha)^ sqrt(1 - 4 * psi^2) * (F1SURF*F2Base/F2SURF) );
+    Denom_strain = - CON1 * psi^(2) * (lambdaH/H)^(2) * exp(2*lambdaH) * ( (exp(lambdaH) - alpha)^(S1 - 2) * F1Base);
 
     for i = 1:nZ
         z_i = z(i);
@@ -82,26 +75,21 @@ for idx = 1:length(lambdaH_list)
 
         % --- Strain Ratio ---
         F1Depth = hypergeom([a1, b1], c1, Z1);
-        F2Depth = hypergeom([a2,b2], c2, Z1);
-
+        
         Num_strain = -CON1 * psi^(2) * (lambdaH/H)^(2) * exp(2*lambdaH*z_i/H) * ...
-                     ( (exp(lambdaH*z_i/H) - alpha)^(S1 - 2) * F1Depth - ...
-                     -  (exp(lambdaH*z_i/H) - alpha)^(S2 - 2) * (1 - alpha)^ sqrt(1 - 4 * psi^2) * (F1SURF*F2Depth/F2SURF) );
+                     ( (exp(lambdaH*z_i/H) - alpha)^(S1 - 2) * F1Depth) ;
         
         STRAIN_RATIOS(i, idx) = Num_strain / Denom_strain;
 
         % --- Displacement Ratio ---
         PH1Depth = (-(lambdaH/H) * exp(lambdaH*z_i/H)) / (2 * alpha) * hypergeom([a3, b3], c3, Z1);
-        PH2Depth= ((-(lambdaH/H) * exp(lambdaH*z_i/H)) / (2 * alpha)) * hypergeom([a4,b4], c4, Z1);
-
+        
         E_depth = (lambdaH/H) * exp(lambdaH*z_i/H) * S1 * (exp(lambdaH*z_i/H) - alpha)^(-S2) * F1Depth + ...
                   (exp(lambdaH*z_i/H) - alpha)^S1 * PH1Depth;
         
-        M_depth = (lambdaH/H) * exp(lambdaH*z_i/H) * S2 * (exp(lambdaH*z_i/H) - alpha)^(-S1) * F2Depth + (exp(lambdaH*z_i/H) - alpha)^(S2) * PH2Depth;
+        u_depth = CON1 * ( E_depth );
 
-        u_depth = CON1 * ( E_depth - (  ((1 - alpha)^ sqrt(1 - 4*psi^2)) * (F1SURF/F2SURF) * M_depth  ) );
-
-        DISPLACEMENT_RATIOS(i, idx) = u_depth / u0;
+        DISPLACEMENT_RATIOS(i, idx) = u_depth / uH;
     end
 end
 

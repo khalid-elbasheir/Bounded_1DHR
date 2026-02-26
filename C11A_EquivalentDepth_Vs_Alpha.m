@@ -3,21 +3,21 @@ clearvars; close all; clc;
 
 % Constants
 H = 50;
-zeta = 0.0;
+xi = 0.05;
 Vzero = 100; % m/s
-Vzero_complex = Vzero * sqrt(1 + (2 * 1i * zeta));
+Vzero_complex = Vzero * sqrt(1 + (2 * 1i * xi));
 
 % Parameters
-alpha = -10:1e-5:1;        % keep your full sweep; we’ll zoom xlim to [0,1]
+alpha = -10:1e-5:1;        
 lambdaH_vec = [3, 5, 10, 15];
 
-% Precompute terms that do not depend on lambda_H
+% Precompute terms
 A      = 1 ./ (1 - alpha);
 ratio  = 1 - alpha;
 fhomo  = (Vzero_complex .* A) ./ (4 * H);
 
 
-%% Figure 1: z_eq/H vs alpha (2x2 subplots for different lambda_H)
+% Figure: z_eq/H vs alpha 
 figure(1); clf;
 for k = 1:numel(lambdaH_vec)
      lambda_H = lambdaH_vec(k);     % dimensionless: lambda_H = H * lambda
@@ -55,34 +55,4 @@ for k = 1:numel(lambdaH_vec)
     xlim([-1 1]); ylim([0 1]);
     legend('show','Location','southwest');
 end
-
-
-%% Figure 2: z_eq/H vs V0/V_\infty (Stiffness ratio used in Rovithis & Mylonakis 2022) with the same 4 subplots
-% figure(2); clf;
-% for k = 1:numel(lambdaH_vec)
-%     lambda_H = lambdaH_vec(k);
-% 
-%     % High-frequency branch
-%     zeq_H_high = log(alpha + ((lambda_H .* alpha) ./ (-lambda_H - log(-1 + alpha) + log(-exp(lambda_H) + alpha)))) ./ lambda_H;
-% 
-%     % Low-frequency branch
-%     den = den_common;
-%     near_zero = abs(den) < eps;
-%     zeq_H_low = zeros(size(alpha));
-%     zeq_H_low(~near_zero) = log((fhomo(~near_zero) .* alpha(~near_zero)) ./ den(~near_zero)) ./ lambda_H;
-%     zeq_H_low(near_zero) = -1e6;
-% 
-%     % Replace NaNs
-%     zeq_H_high(isnan(zeq_H_high)) = -1e6;
-% 
-%     % Plot vs ratio = V0/Vinf
-%     subplot(2,2,k); hold on; box on;
-%     plot(ratio, real(zeq_H_high), 'k-',  'DisplayName','High Frequency');
-%     plot(ratio, real(zeq_H_low),  'k--', 'DisplayName','Low Frequency');
-%     yline(0.5, 'k:');
-%     xlabel('V_{0}/V_{\infty}'); ylabel('z_{eq}/H');
-%     title(sprintf('\\lambda_H = %g', lambda_H));
-%     xlim([0 10]); ylim([0 2]);
-%     legend('show','Location','southwest');
-% end
 

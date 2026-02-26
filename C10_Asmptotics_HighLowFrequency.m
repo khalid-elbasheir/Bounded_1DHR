@@ -1,15 +1,14 @@
-% Clear variables and close figures
 clear 
 close all
 clc
-
+tic;
 % Soil Deposit
 xi = 0.05;
 H = 50; 
 Vinf = 200; % m/s
 
 % Excitation Frequencies
-omega = linspace(0, 900, 10E3);% Increase the Number of points for accurate values
+omega = linspace(0, 900, 10E3);
 LENGTH = length(omega);
 f = omega / (2 * pi);
 
@@ -23,13 +22,13 @@ for id=1:length(alpha)
  F1sin_Norm(id) = (H * sqrt((exp(-2*H*lambda) * (4 * exp(H*lambda) * alpha(id) * (pi^4 + 6 * H^2 * pi^2 * lambda^2 + 8 * H^4 * lambda^4) - alpha(id)^2 * (pi^4 + 9 * H^2 * pi^2 * lambda^2 + 8 * H^4 * lambda^4) + exp(2 * H * lambda) * (8 * H^5 * lambda^5 + pi^4 * ((-4 + alpha(id)) * alpha(id) + 2 * H * lambda) + H^2 * pi^2 * lambda^2 * ((-16 + alpha(id)) * alpha(id) + 10 * H * lambda)))) / (H^3 * lambda * (pi^4 + 5 * H^2 * pi^2 * lambda^2 + 4 * H^4 * lambda^4)))) / sqrt(2);
 end   
 
-% Create figure for subplots
+% Create figure
 figure;
 
-% Loop over the alpha values to create subplots
+% Loop 
 for idx = 1:length(alpha)
     a = alpha(idx);
-    % Calculate Fundamental Frequency and WaveNumber Function
+    % Calculate Fundamental Frequency and Psi
     Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));   
     f1n = (Vinf_complex / (4 * H)) * (2 / pi) * lambda * H * CharqRoot(idx);
     f_Normalized = f / f1n;
@@ -150,15 +149,15 @@ for idx = 1:length(alpha)
     % Find the second resonance peak after the first resonance
     [~, second_peak_index_HIGHF] = max(TRANSFERF_HIGHF(second_resonance_index_HIGHF:end));
     second_peak_index_HIGHF = second_resonance_index_HIGHF + second_peak_index_HIGHF - 1;
-    % Add an offset to start just a bit before the second resonance
-    offset_HIGHF = 30; % Adjust this value as needed
+    % offset to start just a bit before the second resonance
+    offset_HIGHF = 30; 
     adjusted_start_index_HIGHF = max(1, second_peak_index_HIGHF + offset_HIGHF);
 
 
     % Exclude the first resonance part of the LOWF solution
     [~, first_peak_index_LOWF] = max(TRANSFERF_LOWF(1:floor(LENGTH/2)));
     second_resonance_index_LOWF = first_peak_index_LOWF + find(TRANSFERF_LOWF(first_peak_index_LOWF+1:end) < TRANSFERF_LOWF(first_peak_index_LOWF), 1);
-    offset_LOWF = 30; % Adjust this value as needed
+    offset_LOWF = 30; 
     adjusted_end_index_LOWF = second_resonance_index_LOWF + offset_LOWF;
 
     % Create subplot for each alpha
@@ -173,9 +172,9 @@ for idx = 1:length(alpha)
     xlabel('f/f_{1}', 'Interpreter', 'tex');
     ylabel('F(\omega)');
     legend('Location', 'Best', 'FontSize', 20);
-    xlim([0 6]); % Adjust this range as necessary
-    ylim([0 18]); % Adjust this range as necessary
+    xlim([0 6]); 
+    ylim([0 18]); 
     title(['\alpha = ' num2str(a)]);
 end
 
-set(gcf, 'WindowState', 'maximized');
+toc;

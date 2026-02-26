@@ -7,28 +7,28 @@ tic;
 
 
 % Parameters
-xi = 0;  % Damping factor
+xi = 0; 
 alpha_values = [0.5];
 % Core region
-ZETA12_dense = linspace(-100, 100, 30000);
-ZETA12_dense = ZETA12_dense(ZETA12_dense ~= 0 & ZETA12_dense ~= 1);  % avoid duplication
+Argument_dense = linspace(-100, 100, 30000);
+Argument_dense = Argument_dense(Argument_dense ~= 0 & Argument_dense ~= 1); 
 
 % Tail regions (log spaced)
-neg_tail = -logspace(log10(1e2), log10(1e4), 1000);  % from -100 to -1e4
-pos_tail =  logspace(log10(1e2), log10(1e4), 1000);  % from 100 to 1e4
+neg_tail = -logspace(log10(1e2), log10(1e4), 1000); 
+pos_tail =  logspace(log10(1e2), log10(1e4), 1000);  
 
-% Key points to explicitly include
+% Key points
 key_points = [0, 0.99999];  % exact points
 
 % Combine and sort
-ZETA12 = unique([neg_tail, ZETA12_dense, pos_tail, key_points]);
-LENGTH = length(ZETA12);
+Argument = unique([neg_tail, Argument_dense, pos_tail, key_points]);
+LENGTH = length(Argument);
 
 psi_values = [20 10 5 1 0.5];
 
 num_psi = length(psi_values);
 
-% Loop over different alpha values
+% Loop
 for a_idx = 1:length(alpha_values)
     alpha = alpha_values(a_idx);
     
@@ -52,7 +52,7 @@ for a_idx = 1:length(alpha_values)
 
             % Compute Hypergeometric functions
             F = arrayfun(@(a, b, c, z) hypergeom([a, b], c, z), ...
-                         a_values, b_values, c_values, [ZETA12(o), ZETA12(o)]);
+                         a_values, b_values, c_values, [Argument(o), Argument(o)]);
 
             F1(p, o) = F(1);
 
@@ -61,24 +61,23 @@ for a_idx = 1:length(alpha_values)
 
 
    % Create new masks for 3 specific regions
-mask_neg = ZETA12 < 0;                                 % Plot 1
-mask_pos_small = ZETA12 >= -1 & ZETA12 <= 1;            % Plot 2: INCLUDE ζ = 0 and 1
-mask_pos_large = ZETA12 > 0 & ZETA12 <= 1e12;          % Plot 3: Large positive zeta
+mask_neg = Argument < 0;                                
+mask_pos_small = Argument >= -1 & Argument <= 1;           
+mask_pos_large = Argument > 0 & Argument <= 1e12;          
 
-% Create a figure with horizontal layout (1 row, 3 columns)
-figure('Units', 'normalized', 'Position', [0.05, 0.3, 0.9, 0.4]); % Wider layout
+% Create figure
+figure('Units', 'normalized', 'Position', [0.05, 0.3, 0.9, 0.4]); 
 
-% ==== Plot 1: Negative zeta (1/zeta -> large negative) ====
+% ==== Plot 1: Negative x ====
 subplot(1,3,1);
 hold on;
 legend_entries = cell(1, num_psi);
 for p = 1:num_psi
-    plot(1./ZETA12(mask_neg), F1(p, mask_neg), 'LineWidth', 1.5);
+    plot(1./Argument(mask_neg), F1(p, mask_neg), 'LineWidth', 1.5);
     legend_entries{p} = ['\psi = ', num2str(real(psi_values(p)), '%.2f')];
 end
-xlabel('1/\zeta (Negative \zeta)');
+xlabel('1/x (Negative x)');
 ylabel('F_1');
-title('Plot 1: \zeta < 0');
 legend(legend_entries, 'Location', 'best');
 set(gca, 'XDir', 'reverse');
 set(gca, 'YAxisLocation', 'right');
@@ -88,36 +87,34 @@ grid on;
 hold off;
 
 
-% ==== Plot 2: Small positive zeta (0 < \zeta <= 1) ====
+% ==== Plot 2: Small positive x ====
 subplot(1,3,2);
 hold on;
 legend_entries = cell(1, num_psi);
 for p = 1:num_psi
-    plot(ZETA12(mask_pos_small), F1(p, mask_pos_small), 'LineWidth', 1.5);
+    plot(Argument(mask_pos_small), F1(p, mask_pos_small), 'LineWidth', 1.5);
     legend_entries{p} = ['\psi = ', num2str(real(psi_values(p)), '%.2f')];
 end
-xlabel('\zeta (Small Positive)');
+xlabel('x');
 ylabel('F_1');
-title('Plot 2: 0 < \zeta \leq 1');
 legend(legend_entries, 'Location', 'best');
 xlim([-1 1]);
 grid on;
 hold off;
 
-% ==== Plot 3: Large positive zeta (1/zeta from 0.1 to 1) ====
+% ==== Plot 3: Large positive x ====
 subplot(1,3,3);
 hold on;
 legend_entries = cell(1, num_psi);
 for p = 1:num_psi
-    plot(1./ZETA12(mask_pos_large), F1(p, mask_pos_large), 'LineWidth', 1.5);
+    plot(1./Argument(mask_pos_large), F1(p, mask_pos_large), 'LineWidth', 1.5);
     legend_entries{p} = ['\psi = ', num2str(real(psi_values(p)), '%.2f')];
 end
-xlabel('1/\zeta (Large Positive)');
+xlabel('1/x (Large Positive)');
 ylabel('F_1');
-title('Plot 3: 1 \leq \zeta \leq 10');
 legend(legend_entries, 'Location', 'best');
-set(gca, 'XDir', 'reverse');              % From 1 to 0
-xlim([0 1]);                              % Set desired x limits
+set(gca, 'XDir', 'reverse');              
+xlim([0 1]);                              
 grid on;
 hold off;
 

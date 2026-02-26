@@ -1,10 +1,10 @@
-clear all; close all; clc; tic;
+clear; close all; clc; tic;
 
 % Parameters
-zeta = 0.05;
+xi = 0.05;
 H = 50;
 Vinf = 200;
-Vinf_complex = Vinf * sqrt(1 + (2 * 1i * zeta));
+Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));
 lambdaH = 8;
 
 % α–ψ pairs (third mode for each α)
@@ -21,7 +21,7 @@ Displacement = NaN(nZ, nCases);
 StrainRatio = NaN(nZ, nCases);
 AvgStrain = NaN(nZ, nCases);
 Curvature = NaN(nZ, nCases);
-
+Stress = NaN(nZ, nCases);
 for j = 1:nCases
     alpha = alphas(j);
     psi = psis(j);
@@ -41,7 +41,7 @@ for j = 1:nCases
     Z2 = -((exp(lambdaH) - alpha) / alpha);
     Z3 = -((1 - alpha) / alpha);
 
-    % Surface/base values
+    % Surface
     F1SURF = hypergeom([a1, b1], c1, Z3);
     F2SURF = hypergeom([a2, b2], c2, Z3);
     PH1SURF = (-(lambdaH/H)) / (2 * alpha) * hypergeom([a3, b3], c3, Z3);
@@ -50,7 +50,7 @@ for j = 1:nCases
     M_surf = (lambdaH/H)*S2*(1 - alpha)^(-S1)*F2SURF + (1 - alpha)^S2*PH2SURF;
     uSurf = E_surf - ((1 - alpha)^sqrt(1 - 4*psi^2)) * (F1SURF/F2SURF) * M_surf;
 
-    % Base values
+    % Base
     F1Base = hypergeom([a1, b1], c1, Z2);
     F2Base = hypergeom([a2, b2], c2, Z2);
     PH1Base = (-(lambdaH/H) * exp(lambdaH)) / (2 * alpha) * hypergeom([a3, b3], c3, Z2);
@@ -93,7 +93,17 @@ for j = 1:nCases
         % Average Strain
         denAvg = (uSurf - uBase) / H;
         AvgStrain(i, j) = real(numG / denAvg);
+        
+         %Stress
+        SqrtTerm = (1-alpha)^sqrt(1 - 4*psi^2);
+        ExpTerm_depth = exp(lambdaH * zi / H) - alpha;
+        ExpTerm_base = exp(lambdaH) - alpha;
 
+        Stress_depth = ExpTerm_depth^(S1) * F1 - SqrtTerm* (F1SURF/F2SURF) * ExpTerm_depth^(S2)* F2;
+
+        Stress_Base = ExpTerm_base^(S1) * F1BASE - SqrtTerm* (F1SURF/F2SURF) *ExpTerm_base^(S2)*F2BASE;
+
+        Stress(i, j) = Stress_depth / Stress_Base;
        % Curvature — using denominator at surface (z = 0)
         Gamma_Surface = -psi^2 * (lambdaH/H)^2 * ...
                ( (1 - alpha)^(S1 - 2) * F1SURF ...
@@ -113,25 +123,42 @@ for j = 1:nCases
     end
 end
 
-%% Plotting
+%  Plotting
 figure;
-titles = {'u(z) / u(0)', '\gamma(z) / \gamma(H)', ...
-          '\gamma(z)H / [u(0)-u(H)]', '1/R(z) / 1/R(0)'};
-dataAll = {Displacement, StrainRatio, AvgStrain, Curvature};
+tiledlayout(2,2,'TileSpacing','compact','Padding','compact');
+
+titles  = {'u(z) / u(0)', '\gamma(z) / \gamma(H)', ...
+           '\tau(z) / \tau(H)', '1/R(z) / 1/R(0)'};
+
+letters = {'(a)','(b)','(c)','(d)'};
+dataAll = {Displacement, StrainRatio, Stress, Curvature};
 alphaLabels = {'\alpha = 0.5', '\alpha = 0.000001', '\alpha = -0.5'};
 
+lineStyles = {'-','--',':'};
+
 for k = 1:4
-    subplot(2,2,k);
-    hold on;
+    ax = nexttile;
+    hold(ax,'on');
+
     for j = 1:nCases
-        plot(dataAll{k}(:, j), z_H, 'LineWidth', 1.5);
+        plot(ax, dataAll{k}(:, j), z_H, ...
+             'LineWidth',1.5, ...
+             'LineStyle',lineStyles{j});
     end
-    set(gca, 'YDir', 'reverse', 'XAxisLocation', 'top');
-    xlabel(titles{k});
-    ylabel('z/H');
-    title(titles{k});
-    legend(alphaLabels, 'Location', 'best');
-    grid on;
+
+    % Axis formatting
+    set(ax,'YDir','reverse', ...
+           'XAxisLocation','top', ...
+           'XLim',[-3 3], ...
+           'YLim',[0 1], ...
+           'YTick',0:0.2:1);
+
+
+    xlabel(ax, titles{k});
+
+    box(ax,'on');
 end
+
+
 
 toc;

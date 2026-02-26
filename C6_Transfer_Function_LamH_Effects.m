@@ -13,9 +13,9 @@ n_lambda    = numel(lambdaH_vec);
 n_alpha     = numel(alpha_set);
 
 % Damping ratios
-zeta_list = [0.01 0.05 0.1 0.2];
-colors    = lines(numel(zeta_list));  
-nz        = numel(zeta_list);
+xi_list = [0.01 0.05 0.1 0.2];
+colors    = lines(numel(xi_list));  
+nz        = numel(xi_list);
 
 
 Vinf_vec = V0 ./ (1 - alpha_set);
@@ -46,8 +46,8 @@ for aidx = 1:n_alpha
     AF1_smooth_all = zeros(nz, numel(lambdaH_smooth));
 
     for zidx = 1:nz
-        zeta = zeta_list(zidx);
-        Vinf_Damped = Vinf * sqrt(1 + 2i*zeta); 
+        xi = xi_list(zidx);
+        Vinf_Damped = Vinf * sqrt(1 + 2i*xi); 
 
         AF1_norm_vals = zeros(1, n_lambda);
 
@@ -56,8 +56,8 @@ for aidx = 1:n_alpha
             lambda  = lambdaH / H;
             Cm      = Cm_table(aidx, i);
 
-            % ----- Build hypergeometric parameters -----
-            psi = sqrt(Cm)* sqrt(1 + (2*1i*zeta));
+            % ----- hypergeometric solution -----
+            psi = sqrt(Cm)* sqrt(1 + (2*1i*xi));
             z1 = -((1 - alpha) / alpha);
             z2 = -((exp(lambda*H) - alpha) / alpha);
 
@@ -91,7 +91,7 @@ for aidx = 1:n_alpha
             Fsurf = (E_SURF - CONSTANT*M_SURF) / (E_BASE - CONSTANT*M_BASE);
 
             % Normalized amplification
-            AF1_norm_vals(i) = abs(Fsurf) / (2/(pi*zeta));  % == abs(Fsurf) * (pi*zeta/2)
+            AF1_norm_vals(i) = abs(Fsurf) / (2/(pi*xi));  
         end
         AF1_norm_vals(1)=1;
         
@@ -102,7 +102,7 @@ for aidx = 1:n_alpha
         % Plot
         plot(lambdaH_vec, AF1_norm_vals, 'ko', 'MarkerFaceColor','k');
         plot(ax, lambdaH_smooth, AF1_smooth, 'Color', colors(zidx,:), ...
-            'LineWidth', linew, 'DisplayName', sprintf('\\zeta = %.0f%%', zeta*100));
+            'LineWidth', linew, 'DisplayName', sprintf('\\zeta = %.0f%%', xi*100));
     end
 
     xlabel(ax,'\lambdaH'); ylabel(ax,'|F(\omega)| (\pi\xi/2)');

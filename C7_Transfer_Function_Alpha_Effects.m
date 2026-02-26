@@ -15,8 +15,8 @@ alpha_pos_far = [0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9];
 alpha_vec = [alpha_neg_far, alpha_h, alpha_pos_far];
 
 % Damping ratios
-zeta_list = [0.01 0.05 0.1 0.2];
-colors = lines(numel(zeta_list));
+xi_list = [0.01 0.05 0.1 0.2];
+colors = lines(numel(xi_list));
 
 
 Cm_table = [
@@ -42,13 +42,13 @@ for k = 1:numel(lambdaH_list)
 
 
     % To compute the inset y-range across all zeta curves, store the smoothed arrays
-    AF1_smooth_all = zeros(numel(zeta_list), numel(alpha_smooth));
+    AF1_smooth_all = zeros(numel(xi_list), numel(alpha_smooth));
 
     % === MAIN SUBPLOT ===
     axMain = subplot(2,2,k); hold(axMain,'on'); grid(axMain,'on');
 
-    for zidx = 1:numel(zeta_list)
-        zeta = zeta_list(zidx);
+    for zidx = 1:numel(xi_list)
+        xi = xi_list(zidx);
         AF1_norm_vals = zeros(size(alpha_vec));
 
        
@@ -56,12 +56,12 @@ for k = 1:numel(lambdaH_list)
             alpha = alpha_vec(i);
 
             Vinf        = V0/(1 - alpha);
-            Vinf_Damped = Vinf * sqrt(1 + 2i*zeta); 
+            Vinf_Damped = Vinf * sqrt(1 + 2i*xi); 
 
             Cm = Cm_table(k, i);
 
-            % === Exact psi and hypergeometric build ===
-            psi = sqrt(Cm) * sqrt(1 + (2*1i*zeta));
+            % === hypergeometric solution ===
+            psi = sqrt(Cm) * sqrt(1 + (2*1i*xi));
 
             z1 = -((1 - alpha) / alpha);
             z2 = -((exp(lambda*H) - alpha) / alpha);
@@ -98,16 +98,16 @@ for k = 1:numel(lambdaH_list)
             CONSTANT = (1 - alpha)^(sq) * (F1surf / F2surf);
             Fsurf = (E_SURF - CONSTANT*M_SURF) / (E_BASE - CONSTANT*M_BASE);
 
-            AF1_norm_vals(i) = abs(Fsurf) / (2/(pi*zeta));
+            AF1_norm_vals(i) = abs(Fsurf) / (2/(pi*xi));
         end
 
         
         AF1_smooth = spline(alpha_vec, AF1_norm_vals, alpha_smooth);
-        AF1_smooth_all(zidx, :) = AF1_smooth;  % stash for inset y-limits
+        AF1_smooth_all(zidx, :) = AF1_smooth; 
 
         
         plot(axMain, alpha_smooth, AF1_smooth, 'LineWidth', linew, ...
-             'Color', colors(zidx,:), 'DisplayName', sprintf('\\zeta = %g%%', zeta*100));
+             'Color', colors(zidx,:), 'DisplayName', sprintf('\\zeta = %g%%', xi*100));
 
         
 

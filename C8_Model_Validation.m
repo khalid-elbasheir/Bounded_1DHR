@@ -60,11 +60,11 @@ z_values_normalized = z_values / H;
 % Multi-Layer Transfer Function (Haskel Thompson)
 % Soil and wave parameters
 rho = 2; % Mg/m^3
-zeta = 0.05;
+xi = 0.05;
 C_m = [sqrt(0.8036)];
-V0_complex = V0 * sqrt(1 + (2 * 1i * zeta)); 
+V0_complex = V0 * sqrt(1 + (2 * 1i * xi)); 
 Vinf = V0 / (1 - alpha);
-Vinf_complex = Vinf * sqrt(1 + (2 * 1i * zeta));  
+Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));  
 
 % Frequency range
 f = linspace(0, 80, 2E3);
@@ -136,7 +136,6 @@ end
 TRANSFER_ABSOLUTE_EXP = abs(TRANSFERF);
 
 % Multi-Layer Calculation (Haskel Thompson)
-% Multi-Layer Transfer Matrix
 H_layers = diff([0, depths]);
 
 % Calculate alpha for each layer
@@ -144,7 +143,7 @@ Vs_complex = zeros(1, length(H_layers));
 G = zeros(1, length(H_layers));
 
 for p = 1:length(H_layers)
-    Vs_complex(p) = Vs(p) * (1 + (1i * zeta));
+    Vs_complex(p) = Vs(p) * (1 + (1i * xi));
     G(p) = rho*(Vs_complex(p)^2);
 end
 
@@ -159,33 +158,32 @@ for g = 1:length(f)
 
     % Handling the zero frequency case separately
     if f(g) == 0
-        % Set a static response for zero frequency
-        TRANSFERF_SCALAR(g) = 1.0; % Static case: no dynamic response
-        TRANSFER_ABSOLUTE_ML(g) = 1.0; % Absolute value is also 1 for static case
+        TRANSFERF_SCALAR(g) = 1.0; % Static case
+        TRANSFER_ABSOLUTE_ML(g) = 1.0;
     else
         for i = 1:length(H_layers)
             % Compute KAPPA for each layer
             KAPPA(g) = (2 * pi * f(g)) / Vs_complex(i);
 
-            % Define DeltaInv for the current layer (no inversion needed)
+            % Define DeltaInv
             DeltaInv = [cos(KAPPA(g) * H_layers(i)), sin(KAPPA(g) * H_layers(i)) / (G(i) * KAPPA(g));
                         - (G(i) * KAPPA(g)) * sin(KAPPA(g) * H_layers(i)), cos(KAPPA(g) * H_layers(i))];
 
             % Multiply the transfer matrix of this layer to Pimatrix
-            Pimatrix = Pimatrix * DeltaInv;  % No pinv or inv
+            Pimatrix = Pimatrix * DeltaInv; 
         end
 
-        % Calculate the transfer function scalar for non-zero frequencies
+        % Calculate the transfer function scalar
         TRANSFERF_SCALAR(g) = Pimatrix(1,1) - (Pimatrix(1,2) * Pimatrix(2,1) / Pimatrix(2,2));
 
         TRANSFER_ABSOLUTE_ML(g) = abs(TRANSFERF_SCALAR(g));
     end
 end
 
-% --- Plotting Both Solutions in Two Subplots ---
+% --- Plotting ---
 figure;
 
-% --- First Subplot: Normalized Shear Wave Velocity Profile (from Code 1) ---
+% --- First Subplot: Normalized Shear Wave Velocity Profile
 subplot(1, 2, 1); 
 plot(Vs_function_normalized, z_values_normalized, 'k--', 'LineWidth', 2);
 hold on;
@@ -198,13 +196,13 @@ ax1.XAxisLocation = 'top';
 set(gca, 'YDir', 'reverse');
 
 
-% --- Second Subplot: Transfer Function Comparison (from Code 2) ---
+% --- Second Subplot: Transfer Function Comparison
 subplot(1, 2, 2);
 plot(f_normalized, TRANSFER_ABSOLUTE_EXP, 'k--', 'LineWidth', 2);  % Exponential Solution
 hold on;
 plot(f_normalized, TRANSFER_ABSOLUTE_ML, 'k-', 'LineWidth', 2);  % Multi-Layer Solution
 xlabel('f/f_{1}');
-ylabel('F(\omega)');
+ylabel('|F(\omega)|');
 legend('Exact solution (Eq. 30)', 'Numerical multi-layer solution', 'Location', 'Best');
 xlim([0 6]);
 
