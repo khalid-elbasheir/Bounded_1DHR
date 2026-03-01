@@ -2,10 +2,9 @@
 
 This repository contains the MATLAB scripts used to generate the figures for the research paper titled:
 
-"_Seismic Response of a Viscoelastic Layerwith Bounded Exponential Inhomogeneity_"
-K. Elbasheir, H. Parashakis, E. Rovithis, T. Kishida, A. Giaralis, G. Mylonakis
+"_Seismic Response of a Viscoelastic Layerwith Bounded Exponential Inhomogeneity_" by K. Elbasheir, H. Parashakis, E. Rovithis, T. Kishida, A. Giaralis, G. Mylonakis
 
-The paper is in the peer-review stage with BSSA journal. The code here is made available to support the peer-review process. 
+The paper is in the peer-review stage with the BSSA journal. The code here is made available to support the peer-review process. 
 
 
 ## License
