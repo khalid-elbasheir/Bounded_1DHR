@@ -1,3 +1,4 @@
+%% Surface Response - Site 2 - Northridge
 clear
 close all
 clc

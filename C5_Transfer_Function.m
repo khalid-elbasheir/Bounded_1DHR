@@ -2,10 +2,10 @@ clear
 close all
 clc
 
-% Inhomogeneous Soil parameters
+% parameters
 xi = 0.05;
-H = 50;  % depth (m)
-Vinf = 200; % m/s
+H = 50;  
+Vinf = 200; 
 lambda_vals = [3/H 1/H 3/H 8/H 3/H 1/H];
 alpha = [0.9 0.9 0.8 0.5 0.5 1E-5]; 
 C_m = [sqrt(0.1864) sqrt(0.5909) sqrt(0.1997) sqrt(0.0378) sqrt(0.2308) sqrt(2.4662)];%Charestrstic Equation first Root

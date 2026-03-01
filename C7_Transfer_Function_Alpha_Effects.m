@@ -4,8 +4,6 @@ clear; close all; clc; tic;
 H = 50; 
 V0 = 100;
 linew = 2.0;
-
-% Lambda*H Parameters
 lambdaH_list = [1, 3, 5, 10];      
 
 % Alpha vector
@@ -37,14 +35,10 @@ for k = 1:numel(lambdaH_list)
     lambdaH = lambdaH_list(k);
     lambda  = lambdaH / H;
 
-    % Common alpha grid used for smoothing and for inset masking
     alpha_smooth = linspace(min(alpha_vec), max(alpha_vec), 400);
 
-
-    % To compute the inset y-range across all zeta curves, store the smoothed arrays
     AF1_smooth_all = zeros(numel(xi_list), numel(alpha_smooth));
 
-    % === MAIN SUBPLOT ===
     axMain = subplot(2,2,k); hold(axMain,'on'); grid(axMain,'on');
 
     for zidx = 1:numel(xi_list)
@@ -60,7 +54,7 @@ for k = 1:numel(lambdaH_list)
 
             Cm = Cm_table(k, i);
 
-            % === hypergeometric solution ===
+            % === analytical solution ===
             psi = sqrt(Cm) * sqrt(1 + (2*1i*xi));
 
             z1 = -((1 - alpha) / alpha);
@@ -113,8 +107,10 @@ for k = 1:numel(lambdaH_list)
 
     end
       
-    xl = [-1 1]; xlim(axMain, xl);
-    xlabel(axMain, '\alpha'); ylabel(axMain, '|F(\omega)| / (\pi\xi/2)');
+    xl = [-1 1]; 
+    xlim(axMain, xl);
+    xlabel(axMain, '\alpha'); 
+    ylabel(axMain, 'A_{1}/A_{1H}');
     title(axMain, sprintf('\\lambdaH = %.3g', lambdaH), 'Interpreter','tex', 'FontWeight','bold');
     set(axMain, 'FontSize', 12);
     legend(axMain, 'show', 'Location', 'best');

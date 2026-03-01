@@ -1,3 +1,6 @@
+% This code solve the characteristic equation using initial guesses and
+% plot the first three modal shapes for each combination of inhomogeneity
+% parameters
 clear 
 close all
 clc
@@ -5,7 +8,7 @@ tic
 
 H=50;
 lambda=[3/H 1/H 3/H 8/H 3/H 1/H];
-alpha=[0.9 0.9 0.8 0.5 0.5 1E-5];
+alpha=[0.9 0.9 0.8 0.5 0.5 1E-5]; % an alpha=0 generates a singularity in the hypergeometric argument
 
 
 

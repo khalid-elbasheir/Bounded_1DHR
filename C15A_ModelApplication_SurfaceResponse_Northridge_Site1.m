@@ -1,4 +1,4 @@
-%% MULTI LAYER SOLUTION PROFILE 1 (GAZETAS AND DOBRY)
+%% Surface Response - Site 1 - Northridge
 clear
 close all
 clc
@@ -6,7 +6,7 @@ tic;
 
 
 % Load the input motion
-load Northridge.txt  % Load Northridge earthquake data
+load Northridge.txt  
 
 %LENGTH = length(Northridge);
 LENGTH =2048;

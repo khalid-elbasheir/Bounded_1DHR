@@ -1,10 +1,10 @@
-%% MULTI LAYER SOLUTION PROFILE 1 (GAZETAS AND DOBRY)
+%% Transfer Functions - Site 2
 clear
 close all
 clc
 tic;
 
-f = linspace(0, 50, 10E3); % Adjust frequency range
+f = linspace(0, 50, 10E3); 
 LENGTH = length(f);
 
 %Circular Frequency

@@ -2,46 +2,34 @@ clear
 close all
 clc
 
-% Discretized Shear Wave Velocity Profile
-V0 = 213;  % m/s (Vs at the surface)
+% Exponential model
+V0 = 213;  
 alpha = 0.9;  
 lam = 0.02;  % Lambda
-H = 35;  % m (Total depth)
+H = 35;  
 
-% Setting Vinf
-V_inf = V0 / (1 - alpha);  % m/s
+V_inf = V0 / (1 - alpha); 
 V_BASE = V_inf * (1 - alpha * exp(-lam * H));
 
-% depth array and corresponding Vs values
+% Discretized layer system
 depths = [];
 Vs = [];
-
-% depth interval for each layer
 depth_interval = 3;
-
-% Start at the surface (depth = 0)
 current_depth = 0;
 
 while current_depth < H
-    % Define the depth for the next layer
     layer_depth = current_depth + depth_interval;  
-    
     if layer_depth > H
         layer_depth = H;  
     end
-    
-    % Calculate Vs 
     Vs_upper = V_inf * (1 - alpha * exp(-lam * current_depth));
     Vs_lower = V_inf * (1 - alpha * exp(-lam * layer_depth));
-    
-    % Average Vs
+
     Vs_layer = (Vs_upper + Vs_lower) / 2;
     
-    % Add to the arrays
     depths = [depths, current_depth, layer_depth];
-    Vs = [Vs, Vs_layer, Vs_layer];  % Same Vs for the entire layer (average value)
-    
-    % Update the current depth
+    Vs = [Vs, Vs_layer, Vs_layer]; 
+
     current_depth = layer_depth;
 end
 
@@ -49,7 +37,6 @@ end
 z_values = linspace(0, H, 100);  
 Vs_function = V_inf * (1 - alpha * exp(-lam * z_values));
 
-% Normalize the x-axis by Vs/V_inf
 Vs_normalized = Vs / V_BASE;
 Vs_function_normalized = Vs_function / V_BASE;
 
@@ -57,8 +44,8 @@ Vs_function_normalized = Vs_function / V_BASE;
 depths_normalized = depths / H;
 z_values_normalized = z_values / H;
 
-% Multi-Layer Transfer Function (Haskel Thompson)
-% Soil and wave parameters
+%% Solution calculation
+% parameters
 rho = 2; % Mg/m^3
 xi = 0.05;
 C_m = [sqrt(0.8036)];
@@ -138,7 +125,6 @@ TRANSFER_ABSOLUTE_EXP = abs(TRANSFERF);
 % Multi-Layer Calculation (Haskel Thompson)
 H_layers = diff([0, depths]);
 
-% Calculate alpha for each layer
 Vs_complex = zeros(1, length(H_layers));
 G = zeros(1, length(H_layers));
 
@@ -147,16 +133,15 @@ for p = 1:length(H_layers)
     G(p) = rho*(Vs_complex(p)^2);
 end
 
-% Preallocate arrays and matrices for Multi-Layer Approach
+% Preallocate matrices 
 TRANSFER_ABSOLUTE_ML = zeros(1, length(f));
 KAPPA = zeros(1, length(f));
 TRANSFERF_SCALAR = zeros(1, length(f));
 
 for g = 1:length(f)
-    % Initialize Pimatrix for each frequency
+    
     Pimatrix = eye(2);
 
-    % Handling the zero frequency case separately
     if f(g) == 0
         TRANSFERF_SCALAR(g) = 1.0; % Static case
         TRANSFER_ABSOLUTE_ML(g) = 1.0;
@@ -180,10 +165,10 @@ for g = 1:length(f)
     end
 end
 
-% --- Plotting ---
+% Plotting
 figure;
 
-% --- First Subplot: Normalized Shear Wave Velocity Profile
+% Normalized Shear Wave Velocity Profile
 subplot(1, 2, 1); 
 plot(Vs_function_normalized, z_values_normalized, 'k--', 'LineWidth', 2);
 hold on;
@@ -196,7 +181,7 @@ ax1.XAxisLocation = 'top';
 set(gca, 'YDir', 'reverse');
 
 
-% --- Second Subplot: Transfer Function Comparison
+% Transfer Function Comparison
 subplot(1, 2, 2);
 plot(f_normalized, TRANSFER_ABSOLUTE_EXP, 'k--', 'LineWidth', 2);  % Exponential Solution
 hold on;
@@ -205,4 +190,3 @@ xlabel('f/f_{1}');
 ylabel('|F(\omega)|');
 legend('Exact solution (Eq. 30)', 'Numerical multi-layer solution', 'Location', 'Best');
 xlim([0 6]);
-

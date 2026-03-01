@@ -5,7 +5,7 @@ tic;
 % Soil Deposit
 xi = 0.05;
 H = 50; 
-Vinf = 200; % m/s
+Vinf = 200;
 
 % Excitation Frequencies
 omega = linspace(0, 900, 10E3);
@@ -170,7 +170,7 @@ for idx = 1:length(alpha)
     set(gca, 'FontSize', 22);
     set(findall(gcf, 'Type', 'Text'), 'FontWeight', 'bold');
     xlabel('f/f_{1}', 'Interpreter', 'tex');
-    ylabel('F(\omega)');
+    ylabel('|F(\omega)|');
     legend('Location', 'Best', 'FontSize', 20);
     xlim([0 6]); 
     ylim([0 18]); 

@@ -56,7 +56,7 @@ for aidx = 1:n_alpha
             lambda  = lambdaH / H;
             Cm      = Cm_table(aidx, i);
 
-            % ----- hypergeometric solution -----
+            % ----- analytical solution -----
             psi = sqrt(Cm)* sqrt(1 + (2*1i*xi));
             z1 = -((1 - alpha) / alpha);
             z2 = -((exp(lambda*H) - alpha) / alpha);
@@ -105,7 +105,8 @@ for aidx = 1:n_alpha
             'LineWidth', linew, 'DisplayName', sprintf('\\zeta = %.0f%%', xi*100));
     end
 
-    xlabel(ax,'\lambdaH'); ylabel(ax,'|F(\omega)| (\pi\xi/2)');
+    xlabel(ax,'\lambdaH'); 
+    ylabel(ax,'A_{1}/A_{1H}');
     title(ax, sprintf('\\alpha = %.2f', alpha), 'FontWeight','bold');
     xlim(ax, [0 max(lambdaH_vec)]);
     ylim([0.9,1.3])

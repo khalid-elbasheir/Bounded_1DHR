@@ -1,10 +1,10 @@
-clear ; close all; clc; tic;
+clear ; 
+close all; 
+clc; 
+tic;
 
 % Common Parameters
-xi = 0.05;
 H = 50;
-Vinf = 200;
-Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));
 lambdaH = 8;
 alpha = 0.5;
 psi = [sqrt(0.0378) sqrt(0.3172) sqrt(0.8474)];
@@ -122,21 +122,18 @@ for k = 1:4
     ax = nexttile;
     hold(ax,'on');
 
-    % curves
+
     for j = 1:nModes
         plot(ax, dataAll{k}(:,j), z_H, ...
              'LineWidth',1.5, 'LineStyle',lineStyles{j});
     end
 
-    % axes style
-    set(ax,'YDir','reverse', ...          % 0 at top, 1 at bottom
+    % axes
+    set(ax,'YDir','reverse', ...          
            'XAxisLocation','top', ...
            'XLim',[-3 3], ...
            'YLim',[0 1], ...
            'YTick',0:0.2:1);
-
-
-    % x label at top
     xlabel(ax, titles{k});
 
     box(ax,'on');

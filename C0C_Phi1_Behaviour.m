@@ -1,15 +1,10 @@
-clear all
+clear
 close all
 clc
 tic;
 
-% Parameters
-xi = 0.0;    
-
-alpha_values = [0.5];  
-
 % Core region
-Argument_dense = linspace(-100, 100, 30000);
+Argument_dense = linspace(-100, 100, 3E4);
 Argument_dense = Argument_dense(Argument_dense ~= 0 & Argument_dense ~= 1);  
 
 % Tail regions (log spaced)
@@ -17,7 +12,7 @@ neg_tail = -logspace(log10(1e2), log10(1e4), 1000);
 pos_tail =  logspace(log10(1e2), log10(1e4), 1000);  
 
 % Key points
-key_points = [0, 0.99999];  % exact points
+key_points = [-1, 0, 0.99999];  % exact points
 
 % Combine and sort
 Argument = unique([neg_tail, Argument_dense, pos_tail, key_points]);
@@ -25,18 +20,13 @@ LENGTH = length(Argument);
 
 
 
-psi_values = [10 5 1 0.5];
+psi_values = [20 10 5 1 0.5];
 num_psi = length(psi_values);
 
-% Loop 
-for a_idx = 1:length(alpha_values)
-    alpha = alpha_values(a_idx);
-    
         % Preallocate arrays
-    %F1 = zeros(num_psi, LENGTH);
-    %F2 = zeros(num_psi, LENGTH);
-    PHI1 = zeros(num_psi, LENGTH);
-    %PHI2 = zeros(num_psi, LENGTH);
+
+        PHI1 = zeros(num_psi, LENGTH);
+
 
     parfor p = 1:num_psi
         psi = psi_values(p);
@@ -51,19 +41,17 @@ for a_idx = 1:length(alpha_values)
         c_values = [c1, 2 - c1];
 
         for o = 1:LENGTH
-            EXPlambdaZ = alpha * (1 - Argument(o));
-
+            
             % Compute Hypergeometric functions
-            %F = arrayfun(@(a, b, c, z) hypergeom([a, b], c, z), ...
-             %            a_values, b_values, c_values, [ZETA12(o), ZETA12(o)]);
-            PHI = arrayfun(@(a, b, c, z) ((-lambda * EXPlambdaZ) / (2 * alpha)) * ...
+            % alpha = 0.5;
+            % lambda = 0.02;
+            % exponent = alpha*(1-Argument(o));
+            % Multiplier = - lambda*exponent/2*alpha; 
+            PHI = arrayfun(@(a, b, c, z)  ...
                             hypergeom([a + 1, b + 1], c + 1, z), ...
                             a_values, b_values, c_values, [Argument(o), Argument(o)]);
 
-            %F1(p, o) = F(1);
-            %F2(p, o) = F(2);
             PHI1(p, o) = PHI(1);
-            %PHI2(p, o) = PHI(2);
         end
     end
 
@@ -92,6 +80,7 @@ legend(legend_entries, 'Location', 'best');
 set(gca, 'XDir', 'reverse');
 set(gca, 'YAxisLocation', 'right');
 xlim([-1 0]);
+ylim([-1 1]);
 xticks([-1 -0.8 -0.6 -0.4 -0.2 0]);
 grid on;
 hold off;
@@ -109,6 +98,7 @@ xlabel('x');
 ylabel('P_1');
 legend(legend_entries, 'Location', 'best');
 xlim([-1 1]);
+ylim([-1 1]);
 grid on;
 hold off;
 
@@ -125,11 +115,12 @@ ylabel('P_1');
 legend(legend_entries, 'Location', 'best');
 set(gca, 'XDir', 'reverse');             
 xlim([0 1]);                              
+ylim([-1 1]);
 grid on;
 hold off;
 
 
 
-end
+
 
 toc;

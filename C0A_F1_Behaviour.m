@@ -4,13 +4,8 @@ clc
 
 tic;
 
-
-
-% Parameters
-xi = 0; 
-alpha_values = [0.5];
 % Core region
-Argument_dense = linspace(-100, 100, 30000);
+Argument_dense = linspace(-100, 100, 3E4);
 Argument_dense = Argument_dense(Argument_dense ~= 0 & Argument_dense ~= 1); 
 
 % Tail regions (log spaced)
@@ -18,7 +13,7 @@ neg_tail = -logspace(log10(1e2), log10(1e4), 1000);
 pos_tail =  logspace(log10(1e2), log10(1e4), 1000);  
 
 % Key points
-key_points = [0, 0.99999];  % exact points
+key_points = [-1, 0, 0.99999];  % exact points
 
 % Combine and sort
 Argument = unique([neg_tail, Argument_dense, pos_tail, key_points]);
@@ -28,10 +23,6 @@ psi_values = [20 10 5 1 0.5];
 
 num_psi = length(psi_values);
 
-% Loop
-for a_idx = 1:length(alpha_values)
-    alpha = alpha_values(a_idx);
-    
 
     F1 = zeros(num_psi, LENGTH);
 
@@ -125,6 +116,6 @@ hold off;
 
 
 
-end
+
 
 toc;

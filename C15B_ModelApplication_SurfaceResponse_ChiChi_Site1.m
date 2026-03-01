@@ -1,4 +1,4 @@
-%% MULTI LAYER SOLUTION PROFILE 1 (GAZETAS AND DOBRY)
+%% Surface Response - Site 1 - ChiChi
 clear all
 close all
 clc

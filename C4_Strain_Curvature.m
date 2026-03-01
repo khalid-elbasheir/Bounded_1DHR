@@ -1,14 +1,11 @@
 clear; close all; clc; tic;
 
 % Parameters
-xi = 0.05;
 H = 50;
-Vinf = 200;
-Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));
 lambdaH = 8;
 
 % α–ψ pairs (third mode for each α)
-alphas = [0.5       0.000001   -0.5];
+alphas = [0.5       1E-5   -0.5];
 psis   = [sqrt(0.8474), sqrt(0.9637), sqrt(1.0480)];
 
 z = 0:0.2:H;
@@ -76,10 +73,10 @@ for j = 1:nCases
             (exp(lambdaH*zi/H) - alpha)^S2 * PH2;
         u = E - ((1 - alpha)^sqrt(1 - 4*psi^2)) * (F1SURF/F2SURF) * M;
 
-        % Displacement
-        Displacement(i, j) = real(u / uSurf);
+        % Displacement ratio
+        Displacement(i, j) =u / uSurf;
 
-        % Strain γ/γ(H)
+        % Strain ratio
         numG = -psi^2 * (lambdaH/H)^2 * exp(2*lambdaH*zi/H) * ...
                ( (exp(lambdaH*zi/H) - alpha)^(S1-2) * F1 - ...
                  (exp(lambdaH*zi/H) - alpha)^(S2-2) * ...
@@ -88,13 +85,10 @@ for j = 1:nCases
                ( (exp(lambdaH) - alpha)^(S1-2) * F1Base - ...
                  (exp(lambdaH) - alpha)^(S2-2) * ...
                  (1 - alpha)^sqrt(1 - 4*psi^2) * (F1SURF * F2Base / F2SURF) );
-        StrainRatio(i, j) = real(numG / denG);
+        StrainRatio(i, j) = numG / denG;
 
-        % Average Strain
-        denAvg = (uSurf - uBase) / H;
-        AvgStrain(i, j) = real(numG / denAvg);
         
-         %Stress
+         %Stress ratio
         SqrtTerm = (1-alpha)^sqrt(1 - 4*psi^2);
         ExpTerm_depth = exp(lambdaH * zi / H) - alpha;
         ExpTerm_base = exp(lambdaH) - alpha;
@@ -104,7 +98,8 @@ for j = 1:nCases
         Stress_Base = ExpTerm_base^(S1) * F1BASE - SqrtTerm* (F1SURF/F2SURF) *ExpTerm_base^(S2)*F2BASE;
 
         Stress(i, j) = Stress_depth / Stress_Base;
-       % Curvature — using denominator at surface (z = 0)
+
+       % Curvature ratio
         Gamma_Surface = -psi^2 * (lambdaH/H)^2 * ...
                ( (1 - alpha)^(S1 - 2) * F1SURF ...
                - (1 - alpha)^(S2 - 2) * ...
@@ -118,7 +113,7 @@ for j = 1:nCases
         denC = -(((psi^2 * (lambdaH/H)^2) / ((1 - alpha)^2)) * uSurf + ...
                  ((2 * alpha * lambdaH / H) / (1 - alpha)) * Gamma_Surface);
 
-        Curvature(i, j) = real(numC / denC);
+        Curvature(i, j) = numC / denC;
 
     end
 end
@@ -146,7 +141,6 @@ for k = 1:4
              'LineStyle',lineStyles{j});
     end
 
-    % Axis formatting
     set(ax,'YDir','reverse', ...
            'XAxisLocation','top', ...
            'XLim',[-3 3], ...

@@ -3,11 +3,10 @@ clc
 close all
 tic;
 
-% Fixed parameters
+% parameters
 H = 50;
 alpha = 1;
-
-% lambdaH values and corresponding psi sets (only use first freq psi(1)) 
+ 
 lambdaH_list = [5, 8, 10, 15];
 psi_values_list = {
     [sqrt(0.0829), sqrt(0.3367), sqrt(0.5646)];
@@ -21,11 +20,11 @@ z = 1E-5:0.2:H;
 z_H = z / H;
 nZ = length(z);
 
-% Prepare outputs
+% Preallocate
 STRAIN_RATIOS = zeros(nZ, length(lambdaH_list));
 DISPLACEMENT_RATIOS = zeros(nZ, length(lambdaH_list));
 
-% Loop over lambdaH values
+% Loop
 for idx = 1:length(lambdaH_list)
     lambdaH = lambdaH_list(idx);
     psi = psi_values_list{idx}(1);  % Only first frequency
@@ -50,7 +49,6 @@ for idx = 1:length(lambdaH_list)
     Z3 = -((1 - alpha) / alpha);
 
     
-    % compute 
     F1SURF = hypergeom([a1, b1], c1, Z3);
     F1Base = hypergeom([a1,b1], c1, Z2);
 

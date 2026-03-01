@@ -3,12 +3,8 @@ close all
 clc
 tic;
 
-% Parameters
-xi = 0.0;   
-alpha_values = [0.5];   
-
 % Core region
-Argument_dense = linspace(-100, 100, 30000);
+Argument_dense = linspace(-100, 100, 3E4);
 Argument_dense = Argument_dense(Argument_dense ~= 0 & Argument_dense ~= 1); 
 
 % Tail regions (log spaced)
@@ -16,7 +12,7 @@ neg_tail = -logspace(log10(1e2), log10(1e4), 1000);
 pos_tail =  logspace(log10(1e2), log10(1e4), 1000);  
 
 % Key points
-key_points = [0, 0.99999];  % exact points
+key_points = [-1, 0, 0.99999];  % exact points
 
 % Combine and sort
 Argument = unique([neg_tail, Argument_dense, pos_tail, key_points]);
@@ -24,13 +20,9 @@ LENGTH = length(Argument);
 
 
 
-psi_values = [10 5 1 0.5];
+psi_values = [20 10 5 1 0.5];
 num_psi = length(psi_values);
-
-% Loop
-for a_idx = 1:length(alpha_values)
-    alpha = alpha_values(a_idx);
-    
+   
     % Preallocate arrays
 
     F2 = zeros(num_psi, LENGTH);
@@ -49,7 +41,7 @@ for a_idx = 1:length(alpha_values)
         c_values = [c1, 2 - c1];
 
         for o = 1:LENGTH
-            EXPlambdaZ = alpha * (1 - Argument(o));
+           
 
             % Compute Hypergeometric functions
             F = arrayfun(@(a, b, c, z) hypergeom([a, b], c, z), ...
@@ -123,8 +115,5 @@ xlim([0 1]);
 grid on;
 hold off;
 
-
-
-end
 
 toc;

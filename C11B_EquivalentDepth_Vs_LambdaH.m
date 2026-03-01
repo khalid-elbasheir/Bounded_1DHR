@@ -1,17 +1,16 @@
-% Clear variables and close figures
 clear;
 close all;
 clc;
 
-% Define constants
+% constants
 H     = 50;
 xi  = 0.05;
-Vzero = 100; % m/s
+Vzero = 100;
 Vzero_complex = Vzero * sqrt(1 + (2 * 1i * xi)); 
 
-% Define alpha values and lambda range
+% parameters
 alphas   = [-0.9, -0.5, 0.5, 0.9];
-lambda   = 0.0005:0.01:0.3;          % base grid
+lambda   = 0.0005:0.01:0.3;          
 lambda_H = lambda .* H;
 
 % Fine grid for smoothing with spline
@@ -26,12 +25,12 @@ for a_idx = 1:length(alphas)
     zeq_H_low  = zeros(length(lambda), 1);
     fsin       = zeros(1, length(lambda));
 
-    % Complex freestream
+    % Precompute terms
     Vinf         = Vzero / (1 - alpha);
     Vinf_complex = Vinf * sqrt(1 + (2 * 1i * xi));
     fhomo        = Vinf_complex / (4 * H);
 
-    % Loop over lambda to compute fsin
+    
     for idx = 1:length(lambda)
         lam = lambda(idx);
         fsin(idx) = (H * sqrt((exp(-2*H*lam) * ...
@@ -42,7 +41,7 @@ for a_idx = 1:length(alphas)
             / (H^3 * lam * (pi^4 + 5 * H^2 * pi^2 * lam^2 + 4 * H^4 * lam^4)))) / sqrt(2);
     end
 
-    % Compute normalized equivalent depths
+   
     for i = 1:length(lambda)
         lh = lambda_H(i);
 
@@ -63,11 +62,11 @@ for a_idx = 1:length(alphas)
     subplot(2,2,a_idx);
     hold on;
 
-    % Smooth curves
-    plot(lambda_H_fine, zeq_H_high_s, 'k-',  'LineWidth', 1.5); % High freq
-    plot(lambda_H_fine, zeq_H_low_s,  'k--', 'LineWidth', 1.5); % Low freq
 
-    % Axes and labels
+    plot(lambda_H_fine, zeq_H_high_s, 'k-',  'LineWidth', 1.5); 
+    plot(lambda_H_fine, zeq_H_low_s,  'k--', 'LineWidth', 1.5); 
+
+    
     xlim([0 15]);
     ylim([0 1]);
     xlabel('\lambda H','Interpreter','tex');

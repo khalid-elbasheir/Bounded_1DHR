@@ -1,10 +1,11 @@
-% Clear variables and close figures
-clearvars; close all; clc;
+clear;
+close all;
+clc;
 
 % Constants
 H = 50;
 xi = 0.05;
-Vzero = 100; % m/s
+Vzero = 100; 
 Vzero_complex = Vzero * sqrt(1 + (2 * 1i * xi));
 
 % Parameters
@@ -17,11 +18,12 @@ ratio  = 1 - alpha;
 fhomo  = (Vzero_complex .* A) ./ (4 * H);
 
 
-% Figure: z_eq/H vs alpha 
-figure(1); clf;
+% Figure:  
+figure(1); 
+clf;
 for k = 1:numel(lambdaH_vec)
-     lambda_H = lambdaH_vec(k);     % dimensionless: lambda_H = H * lambda
-     lambda   = lambda_H / H;       % <-- corrected per-subplot lambda
+     lambda_H = lambdaH_vec(k);     
+     lambda   = lambda_H / H;       
 
      fsin   = (H .* sqrt((exp(-2 * H * lambda) .* ...
         (4 .* exp(H * lambda) .* alpha .* (pi^4 + 6 * H^2 * pi^2 * lambda^2 + 8 * H^4 * lambda^4) ...
@@ -33,18 +35,18 @@ for k = 1:numel(lambdaH_vec)
     den_common = fhomo - (fsin .* fhomo);
 
 
-    % High-frequency branch
+    % High-frequency
     zeq_H_high = log(alpha + ((lambda_H .* alpha) ./ (-lambda_H - log(-1 + alpha) + log(-exp(lambda_H) + alpha)))) ./ lambda_H;
+    zeq_H_high(isnan(zeq_H_high)) = -1e6;
 
-    % Low-frequency branch (handle zero/near-zero denominators)
+    % Low-frequency
     den = den_common;
-    near_zero = abs(den) < eps;         % logical mask
+    near_zero = abs(den) < eps;        
     zeq_H_low = zeros(size(alpha));
     zeq_H_low(~near_zero) = log((fhomo(~near_zero) .* alpha(~near_zero)) ./ den(~near_zero)) ./ lambda_H;
-    zeq_H_low(near_zero) = -1e6;        % large negative instead of -inf
+    zeq_H_low(near_zero) = -1e6;        
 
-    % Replace NaNs with large negative for visualization
-    zeq_H_high(isnan(zeq_H_high)) = -1e6;
+
 
     % Plot
     subplot(2,2,k); hold on; box on;
@@ -55,4 +57,3 @@ for k = 1:numel(lambdaH_vec)
     xlim([-1 1]); ylim([0 1]);
     legend('show','Location','southwest');
 end
-

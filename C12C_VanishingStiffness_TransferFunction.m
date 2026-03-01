@@ -2,10 +2,13 @@ clear
 close all
 clc
 
-% Soil and wave parameters
-H = 50;  % depth (m)
-Vinf = 200; % m/s
-alpha = 0.9995; % Fixed alpha
+% parameters
+H = 50;  
+Vinf = 200; 
+alpha = 0.9995; 
+
+lambda_vals = [5/H, 8/H, 10/H, 15/H];  
+xi_vals = [0.03, 0.05, 0.1];       
 
 C_m = [sqrt(0.0829), sqrt(0.0366), sqrt(0.024), sqrt(0.0109)];
 
@@ -13,11 +16,8 @@ C_m = [sqrt(0.0829), sqrt(0.0366), sqrt(0.024), sqrt(0.0109)];
 f=linspace(0,80,2E3);
 LENGTH = length(f);
 
-% Parameter ranges
-lambda_vals = [5/H, 8/H, 10/H, 15/H];  % Four lambda values
-xi_vals = [0.03, 0.05, 0.1];       % Three damping values
 
-% Create all (lambda, zeta) combinations
+% combinations
 [LambdaGrid, xiGrid] = meshgrid(lambda_vals, xi_vals);
 lambda_list = LambdaGrid(:);
 xi_list = xiGrid(:);
@@ -121,9 +121,3 @@ for i = 1:length(lambda_vals)
     legend('Location', 'best');
     xlim([0 6])
 end
-
-
-
-
-
-

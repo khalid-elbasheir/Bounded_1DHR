@@ -2,43 +2,43 @@ clear
 close all
 clc
 tic;
-% Data for Profile 1
+% Data for Site 1
 z1 = [0 1 16 24 34]; 
 Vs1 = [170 170 280 400 600];
 
-%Elbasheir 1
+%Elbasheir Site 1
 alpha_1 = 0.9; 
 lambda_1 = 0.0116;
 Vinf_1 = 1365;
 V0_1 = Vinf_1 *(1-alpha_1);
 
-%Rovithis 1
-V0_RM1 = 197;        % From z = 0        % From z = 34
+%Rovithis Site 1
+V0_RM1 = 197;        
 ratio_RM1 = 0.303;
 alpha_RM1 = log(1 / ratio_RM1);
 
 
 
 
-% Data for Profile 2
+% Data for Site 2
 z2 = [0 0.42 0.84 1.27 1.7 2.34 2.98 3.62 4.26 5.97 7.68 9.61 11.79 15 18.21 22.51 27.51 29.51 33.51 50 60]; 
 Vs2 = [112 112 135 159 165 165 165 165 165 130 130 130 130 184 184 184 257 232 300 300 550]; 
 
-%Elbasheir 2
+%Elbasheir Site 2
 V0_2 = 114.59; 
 alpha_2 = 0.7916; 
 lambda_2 = 0.0153;
 
-%Rovithis 2
-V0_RM2 = 134;        % From z = 0        % From z = 34
+%Rovithis Site 2
+V0_RM2 = 134;        
 ratio_RM2 = 0.265;
 alpha_RM2 = log(1 / ratio_RM2);
 
-% Exponential fit function for Profile 1
+% Exponential fit function for Site 1
 exp_fit1 = @(z) V0_1 * (1/(1 - alpha_1)) * (1 - alpha_1 * exp(-lambda_1 * z));
 exp_fit_RM1 = @(z) V0_RM1 *  exp(alpha_RM1 * z /34);
 
-% Exponential fit function for Profile 2
+% Exponential fit function for Site 2
 exp_fit2 = @(z) V0_2 * (1/(1 - alpha_2)) * (1 - alpha_2 * exp(-lambda_2 * z));
 exp_fit_RM2 = @(z) V0_RM2 *  exp(alpha_RM2 * z /60);
 

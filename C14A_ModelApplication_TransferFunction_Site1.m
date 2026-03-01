@@ -1,11 +1,11 @@
-%% MULTI LAYER SOLUTION PROFILE 1 (GAZETAS AND DOBRY)
+%% Transfer Functions - Site 1
 clear 
 close all
 clc
 tic;
 
 
-f = linspace(0, 50, 10E3); % Adjust frequency range
+f = linspace(0, 50, 10E3); 
 LENGTH = length(f);
 
 %Circular Frequency
@@ -13,8 +13,8 @@ omega = (2 * pi) .* f;
 
 % Given data
 xi = 0.05;
-rho =2.0; % Mg/m^3
-H = 34; % m
+rho =2; 
+H = 34; 
 
 
 lambda_FIT = 0.0116;
@@ -25,7 +25,7 @@ VINF_COMPLEX = VINF * (1 + (1i * xi));
 VZERO_COMPLEX = VZERO * (1 + (1i * xi));
 
 % DATA of Rovithis and Mylonakis
-V0_RM = 197;     % m/s
+V0_RM = 197;     
 V0_COMPLEX_RM = V0_RM * (1 + (1i * xi));
 ratio_RM= 0.303; 
 alpha_RM= log(1/ratio_RM);
@@ -127,7 +127,7 @@ for p = 1:length(H_layers)
 end
 
 % Vs30 Calculation
-depth_limit = 30; % depth of interest in meters (Vs30)
+depth_limit = 30; 
 cumulative_depth = 0;
 inv_sum_vs = 0;
 total_thickness = 0;
@@ -206,18 +206,10 @@ legend('Exponential Fit (Eq. 30)','Rovithis and Mylonakis (2022)', 'Multi-layer 
 xlim([0 16]);
 hold off;
 
-
-
-
-
-
-
-
 max(TRANSFER_ABSOLUTE_ML)
 max(TRANSFER_ABSOLUTE_EXP)
 max(abs(TRANSFER_VS30))
 max(abs(F_RM_Bessel))
-
 
 % Find the first three maxima for Exponential Fit Transfer Function
 [pks_exp, locs_exp] = findpeaks(TRANSFER_ABSOLUTE_EXP, f, 'SortStr', 'descend', 'NPeaks', 3);
