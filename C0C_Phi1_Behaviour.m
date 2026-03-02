@@ -43,11 +43,11 @@ num_psi = length(psi_values);
         for o = 1:LENGTH
             
             % Compute Hypergeometric functions
-            % alpha = 0.5;
-            % lambda = 0.02;
-            % exponent = alpha*(1-Argument(o));
-            % Multiplier = - lambda*exponent/2*alpha; 
-            PHI = arrayfun(@(a, b, c, z)  ...
+            alpha = 0.5;
+            lambda = 0.02;
+            exponent = alpha*(1-Argument(o));
+            Multiplier = (- lambda*exponent)/(2*alpha); 
+            PHI = arrayfun(@(a, b, c, z)  Multiplier*...
                             hypergeom([a + 1, b + 1], c + 1, z), ...
                             a_values, b_values, c_values, [Argument(o), Argument(o)]);
 
