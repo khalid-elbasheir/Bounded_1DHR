@@ -13,8 +13,8 @@ LENGTH = length(omega);
 f = omega / (2 * pi);
 
 lambda = 3/H; 
-alpha = [0.5 0.9 -0.5 -0.9];
-CharqRoot = [0.2308 0.1864 0.3142 0.3453];
+alpha = [0.1 0.5 -0.5 -0.9];
+CharqRoot = [sqrt(0.2589) sqrt(0.2308) sqrt(0.3142) sqrt(0.3453)];
 
 
 F1sin_Norm=ones(1, length(alpha)); 
