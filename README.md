@@ -1,4 +1,4 @@
-# Bounded_Vs_1DHR: MATLAB scripts for Dissertation Thesis: "Contributions to Linear and Non-Linear Seismic Site Response"
+# Bounded_1DHR: MATLAB scripts for Dissertation Thesis: "Contributions to Linear and Non-Linear Seismic Site Response"
 
 
 
